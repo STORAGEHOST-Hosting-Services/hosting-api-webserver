@@ -6,27 +6,27 @@ require __DIR__."/../config/SQLConnection.php";
 /**
  * Users
  */
-require __DIR__."/../routes/users/register/register.php";
-require __DIR__."/../routes/users/login/login.php";
-require __DIR__."/../routes/users/delete/delete.php";
-require __DIR__."/../routes/users/info/info.php";
+require __DIR__."/../routes/users/register/Register.php";
+require __DIR__."/../routes/users/login/Login.php";
+require __DIR__."/../routes/users/delete/Delete.php";
+require __DIR__."/../routes/users/info/Info.php";
 require __DIR__."/../routes/users/activation/usersActivationModel.php";
 
 /**
  * Containers
  */
-require __DIR__."/../routes/containers/create/create.php";
-require __DIR__."/../routes/containers/info/info.php";
-require __DIR__."/../routes/containers/power/power.php";
-require __DIR__."/../routes/containers/delete/delete.php";
+require __DIR__."/../routes/containers/create/Create.php";
+require __DIR__."/../routes/containers/info/Info.php";
+require __DIR__."/../routes/containers/power/Power.php";
+require __DIR__."/../routes/containers/delete/Delete.php";
 
 /**
  * VMs
  */
-require __DIR__."/../routes/vms/create/create.php";
-require __DIR__."/../routes/vms/info/info.php";
-require __DIR__."/../routes/vms/power/power.php";
-require __DIR__."/../routes/vms/delete/delete.php";
+require __DIR__."/../routes/vms/create/Create.php";
+require __DIR__."/../routes/vms/info/Info.php";
+require __DIR__."/../routes/vms/power/Power.php";
+require __DIR__."/../routes/vms/delete/Delete.php";
 
 /**
  * Orders

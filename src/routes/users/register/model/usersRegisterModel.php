@@ -83,7 +83,7 @@ class usersRegisterModel
                 )
             );
             if ($req) {
-                //$this->sendMail($activation_key);
+                $this->sendMail($activation_key);
                 $payload = [];
                 array_push($payload, array(
                     "status" => "success",

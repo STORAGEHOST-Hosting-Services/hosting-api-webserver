@@ -1,42 +1,42 @@
 <?php
 
-require __DIR__."/../../vendor/autoload.php";
-require __DIR__."/../config/SQLConnection.php";
+require __DIR__ . "/../../vendor/autoload.php";
+require __DIR__ . "/../config/SQLConnection.php";
 
 /**
  * Users
  */
-require __DIR__."/../routes/users/register/Register.php";
-require __DIR__."/../routes/users/login/Login.php";
-require __DIR__."/../routes/users/delete/Delete.php";
-require __DIR__."/../routes/users/info/Info.php";
-require __DIR__."/../routes/users/activation/usersActivationModel.php";
+require __DIR__ . "/../routes/users/register/Register.php";
+require __DIR__ . "/../routes/users/login/Login.php";
+require __DIR__ . "/../routes/users/delete/Delete.php";
+require __DIR__ . "/../routes/users/info/Info.php";
+require __DIR__ . "/../routes/users/activation/usersActivationModel.php";
 
 /**
  * Containers
  */
-require __DIR__."/../routes/containers/create/Create.php";
-require __DIR__."/../routes/containers/info/Info.php";
-require __DIR__."/../routes/containers/power/Power.php";
-require __DIR__."/../routes/containers/delete/Delete.php";
+require __DIR__ . "/../routes/containers/create/Create.php";
+require __DIR__ . "/../routes/containers/info/Info.php";
+require __DIR__ . "/../routes/containers/power/Power.php";
+require __DIR__ . "/../routes/containers/delete/Delete.php";
 
 /**
  * VMs
  */
-require __DIR__."/../routes/vms/create/Create.php";
-require __DIR__."/../routes/vms/info/Info.php";
-require __DIR__."/../routes/vms/power/Power.php";
-require __DIR__."/../routes/vms/delete/Delete.php";
+require __DIR__ . "/../routes/vms/create/Create.php";
+require __DIR__ . "/../routes/vms/info/Info.php";
+require __DIR__ . "/../routes/vms/power/Power.php";
+require __DIR__ . "/../routes/vms/delete/Delete.php";
 
 /**
  * Orders
  */
-require __DIR__."/../routes/orders/Order.php";
+require __DIR__ . "/../routes/orders/Order.php";
 
 /**
  * Auth
  */
-require __DIR__."/../config/Auth.php";
+require __DIR__ . "/../config/Auth.php";
 
 use Orders\Order;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -94,35 +94,13 @@ $app->get('/api/users', function (Request $request, Response $response) {
     }
 });
 
-$app->get('/api/user/{id}', function (Request $request, Response $response, $args) {
+// Get all users
+$app->get('/api/users/me', function (Request $request, Response $response) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
     if ($auth->isAuth()) {
-        if (isset($args['id'])) {
-            $id = $args['id'];
-
-            if (is_numeric($id)) {
-                return $response->withStatus(200)->withJson((new Info($id, $this->pdo))->listUserInfo());
-
-            } else {
-                return $response->withStatus(400)->withJson(
-                    array(
-                        'status' => 'error',
-                        'message' => "missing_parameter_id",
-                        'date' => time()
-                    ));
-            }
-        } else {
-            $response->withStatus(400)->withJson(
-                array(
-                    'status' => 'error',
-                    'message' => "missing_parameter_id",
-                    'date' => time()
-                ));
-        }
-
-        return $response;
+        return $response->withStatus(200)->withJson((new Info($auth->isAuth()['data']['id'], $this->pdo))->listUserInfo());
     } else {
         return $response->withStatus(401)->withJson(array(
             'status' => 'error',
@@ -144,25 +122,13 @@ $app->get('/api/user/{id}', function (Request $request, Response $response, $arg
  * }
  * });*/
 
-$app->get('/api/user/{id}/vms', function (Request $request, Response $response, $args) {
+$app->get('/api/users/me/vms', function (Request $request, Response $response, $args) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
     if ($auth->isAuth()) {
-        if (isset($args['id']) && (int)$args['id']) {
-            $id = $args['id'];
-
-            $containers = (new Info($id, $this->pdo))->listVms();
-
-            return $response->withStatus(200)->withJson($containers);
-        } else {
-            return $response->withStatus(400)->withJson(
-                array(
-                    'status' => 'error',
-                    'message' => "missing_parameter_id",
-                    'timestamp' => time()
-                ));
-        }
+        $vms = (new Info($auth->isAuth()['data']['id'], $this->pdo))->listVms();
+        return $response->withStatus(200)->withJson($vms);
     } else {
         return $response->withStatus(401)->withJson(array(
             'status' => 'error',
@@ -172,14 +138,12 @@ $app->get('/api/user/{id}/vms', function (Request $request, Response $response, 
     }
 });
 
-$app->delete('/api/user/delete/{id}', function (Request $request, Response $response, $args) {
+$app->delete('/api/users/me/delete', function (Request $request, Response $response, $args) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
     if ($auth->isAuth()) {
-        $id = $args['id'];
-
-        $result = (new Users\Delete($this->pdo, $id))->deleteUser();
+        $result = (new Users\Delete($this->pdo, $auth->isAuth()['data']['id']))->deleteUser();
 
         if (strpos($result, "Integrity constraint violation")) {
             return $response->withStatus(400)->withJson(array(
@@ -208,7 +172,7 @@ $app->delete('/api/user/delete/{id}', function (Request $request, Response $resp
  * -----------------------------------------------------------------------
  */
 
-$app->post('/api/order/create', function (Request $request, Response $response) {
+$app->post('/api/orders/create', function (Request $request, Response $response) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
@@ -249,7 +213,7 @@ $app->post('/api/order/create', function (Request $request, Response $response) 
  * -----------------------------------------------------------------------
  */
 
-$app->post('/api/vm/create', function (Request $request, Response $response) {
+$app->post('/api/vms/create', function (Request $request, Response $response) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
@@ -293,7 +257,7 @@ $app->post('/api/vm/create', function (Request $request, Response $response) {
     }
 });
 
-$app->get('/api/vm/{id}/info', function (Request $request, Response $response, $args) {
+$app->get('/api/vms/{id}/info', function (Request $request, Response $response, $args) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
@@ -417,7 +381,7 @@ $app->delete('/api/vm/{id}/delete', function (Request $request, Response $respon
  * -----------------------------------------------------------------------
  */
 
-$app->post('/api/user/create', function (Request $request, Response $response) {
+$app->post('/api/users/create', function (Request $request, Response $response) {
     $body = $request->getParsedBody();
 
     if (isset($body) && !empty($body)) {
@@ -440,7 +404,7 @@ $app->post('/api/user/create', function (Request $request, Response $response) {
     }
 });
 
-$app->get('/api/user/activation/email={email}&token={token}', function (Request $request, Response $response, $args) {
+$app->get('/api/users/activation/email={email}&token={token}', function (Request $request, Response $response, $args) {
     $email = $args['email'];
     $token = $args['token'];
 
@@ -470,7 +434,7 @@ $app->get('/api/user/activation/email={email}&token={token}', function (Request 
     }
 });
 
-$app->post('/api/user/login', function (Request $request, Response $response) {
+$app->post('/api/users/login', function (Request $request, Response $response) {
     $body = $request->getParsedBody();
 
     if (isset($body) && !empty($body)) {

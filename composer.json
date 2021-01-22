@@ -1,0 +1,8 @@
+{
+  "require": {
+    "slim/slim": "3.*",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "firebase/php-jwt": "^5.2"
+  }
+}

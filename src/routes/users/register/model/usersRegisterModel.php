@@ -13,10 +13,10 @@ use PDOException;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
-include "../config/PHPMailer/src/Exception.php";
-include "../config/PHPMailer/src/SMTP.php";
-include "../config/PHPMailer/src/PHPMailer.php";
-include "../config/Config.php";
+include __DIR__."/../../../../config/PHPMailer/src/Exception.php";
+include __DIR__."/../../../../config/PHPMailer/src/SMTP.php";
+include __DIR__."/../../../../config/PHPMailer/src/PHPMailer.php";
+include __DIR__."/../../../../config/Config.php";
 
 $activation_key = md5(microtime(TRUE) * 100000);
 

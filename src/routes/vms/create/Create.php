@@ -4,7 +4,7 @@ namespace Vms;
 
 use PDO;
 
-include "model/vmsCreateModel.php";
+include __DIR__."/model/vmsCreateModel.php";
 
 class Create
 {

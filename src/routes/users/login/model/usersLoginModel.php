@@ -5,7 +5,7 @@ namespace Users;
 use PDO;
 use PDOException;
 
-require "../routes/users/login/JWT/JWTHandler.php";
+require __DIR__."/../JWT/JWTHandler.php";
 
 class usersLoginModel
 {

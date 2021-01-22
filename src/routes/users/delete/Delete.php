@@ -5,7 +5,7 @@ namespace Users;
 use PDO;
 use usersDeleteModel;
 
-require "model/usersDeleteModel.php";
+require __DIR__."/model/usersDeleteModel.php";
 
 class Delete
 {

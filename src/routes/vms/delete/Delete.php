@@ -4,6 +4,8 @@ namespace Vms;
 
 use PDO;
 
+require __DIR__."/model/vmsDeleteModel.php";
+
 class Delete
 {
     private PDO $pdo;

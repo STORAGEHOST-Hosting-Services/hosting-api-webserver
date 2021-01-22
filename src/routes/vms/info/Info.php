@@ -2,7 +2,7 @@
 
 namespace Vms;
 
-require "model/vmsInfoModel.php";
+require __DIR__."/model/vmsInfoModel.php";
 
 class Info
 {

@@ -86,7 +86,12 @@ class Order
         return (new orderModel($this->pdo, $this->valid_data, $this->user_data))->createOrder();
     }
 
-    public
+    public function getOrders(): array
+    {
+        return (new orderModel($this->pdo, array(), $this->user_data))->getOrders();
+    }
+
+    private
     function validatePayment()
     {
 

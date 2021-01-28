@@ -172,7 +172,24 @@ $app->delete('/api/users/me/delete', function (Request $request, Response $respo
  * -----------------------------------------------------------------------
  */
 
-$app->post('/api/orders/create', function (Request $request, Response $response) {
+$app->get('/api/users/me/orders', function (Request $request, Response $response) {
+    $headers = getallheaders();
+    $auth = new Auth($this->pdo, $headers);
+
+    if ($auth->isAuth()) {
+        $user_data = $auth->isAuth();
+        $vms = (new Order(array(), $user_data, $this->pdo))->getOrders();
+        return $response->withStatus(200)->withJson($vms);
+    } else {
+        return $response->withStatus(401)->withJson(array(
+            'status' => 'error',
+            'message' => 'unauthorized',
+            'date' => time()
+        ));
+    }
+});
+
+$app->post('/api/users/me/orders', function (Request $request, Response $response) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
@@ -213,7 +230,7 @@ $app->post('/api/orders/create', function (Request $request, Response $response)
  * -----------------------------------------------------------------------
  */
 
-$app->post('/api/vms/create', function (Request $request, Response $response) {
+$app->post('/api/vms', function (Request $request, Response $response) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
@@ -285,7 +302,7 @@ $app->get('/api/vms/{id}/info', function (Request $request, Response $response, 
     }
 });
 
-$app->patch('/api/vm/{id}/power', function (Request $request, Response $response, $args) {
+$app->patch('/api/vms/{id}/power', function (Request $request, Response $response, $args) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
@@ -308,7 +325,7 @@ $app->patch('/api/vm/{id}/power', function (Request $request, Response $response
     }
 });
 
-$app->delete('/api/vm/{id}/delete', function (Request $request, Response $response, $args) {
+$app->delete('/api/vms/{id}/delete', function (Request $request, Response $response, $args) {
     $headers = getallheaders();
     $auth = new Auth($this->pdo, $headers);
 
@@ -381,7 +398,7 @@ $app->delete('/api/vm/{id}/delete', function (Request $request, Response $respon
  * -----------------------------------------------------------------------
  */
 
-$app->post('/api/users/create', function (Request $request, Response $response) {
+$app->post('/api/users', function (Request $request, Response $response) {
     $body = $request->getParsedBody();
 
     if (isset($body) && !empty($body)) {

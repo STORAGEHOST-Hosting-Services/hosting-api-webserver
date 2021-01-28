@@ -148,4 +148,41 @@ class orderModel
         }
     }
 
+    public function getOrders(): array
+    {
+        try {
+            $req = $this->pdo->prepare('SELECT id, order_type, date, payment_status FROM storagehost_hosting.`order` WHERE user_id = :user_id');
+            $req->bindParam(':user_id', $this->user_data['data']['id']);
+            $req->execute();
+
+            if ($req) {
+                $orders = $req->fetchAll();
+
+                $array = array();
+
+                foreach ($orders as $order) {
+                    array_push($array, $order);
+                }
+
+                return array(
+                    'status' => 'success',
+                    'user_id' => $this->user_data['data']['id'],
+                    'data' => $array
+                );
+            } else {
+                return array(
+                    'status' => 'error',
+                    'message' => 'order_creation_failed',
+                    'date' => time()
+                );
+            }
+        } catch (PDOException $e) {
+            return array(
+                'status' => 'error',
+                'message' => json_encode($e->getMessage()),
+                'date' => time()
+            );
+        }
+    }
+
 }

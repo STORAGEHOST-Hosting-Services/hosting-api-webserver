@@ -87,7 +87,8 @@ class vmsCreateModel
                         return array(
                             'status' => 'error',
                             'message' => $exception->getMessage(),
-
+                            'step' => 4,
+                            'date' => time()
                         );
                     }
                 } else {

@@ -242,20 +242,12 @@ $app->post('/api/vms', function (Request $request, Response $response) {
         if (isset($body) && !empty($body)) {
             $result = (new Create((array)$body, (array)$user_data, $this->pdo))->validateData();
 
+            //var_dump($result);
+
             if (array_search('error', $result)) {
-                return $response->withStatus(400)->withJson(
-                    array(
-                        'status' => 'error',
-                        'message' => $result,
-                        'timestamp' => time()
-                    ));
+                return $response->withStatus(400)->withJson($result);
             } else {
-                return $response->withStatus(201)->withJson(
-                    array(
-                        'status' => 'success',
-                        'data' => $result,
-                        'timestamp' => time()
-                    ));
+                return $response->withStatus(201)->withJson($result);
             }
         } else {
             return $response->withStatus(400)->withJson(

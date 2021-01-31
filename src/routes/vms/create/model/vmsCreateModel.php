@@ -4,6 +4,7 @@ namespace Vms;
 
 use Config;
 use PDO;
+use PHPMailer\PHPMailer\Exception;
 
 class vmsCreateModel
 {
@@ -14,20 +15,22 @@ class vmsCreateModel
         $this->pdo = $pdo;
     }
 
-    public function createVm(array $vm_data)
+    public function createVm(array $vm_data, array $user_data)
     {
+        var_dump($user_data);
         // Declare variables
         $hostname = $this->getName($vm_data['os']);
         $ip = $this->getIp();
 
-        $req = $this->pdo->prepare('INSERT INTO storagehost_hosting.vm(hostname, ip, power_status, os, instance_type, order_id) VALUES (:hostname, :ip, :power_status, :os, :instance_type, :order_id)');
+        $req = $this->pdo->prepare('INSERT INTO storagehost_hosting.vm(hostname, ip, power_status, os, instance_type, order_id, user_id) VALUES (:hostname, :ip, :power_status, :os, :instance_type, :order_id, :user_id)');
         $req->execute(array(
             ':hostname' => $hostname,
             ':ip' => $ip,
             ':power_status' => false,
             ':os' => $vm_data['os'],
             ':instance_type' => $vm_data['instance_type'],
-            ':order_id' => $vm_data['order_id']
+            ':order_id' => $vm_data['order_id'],
+            ':user_id' => $user_data['data']['id']
         ));
 
         if ($req) {
@@ -41,8 +44,9 @@ class vmsCreateModel
                 $hostname_status->execute();
             }
 
-            // Get the ID of the inserted instance
+            // Get the ID of the inserted instance (VM table)
             $last_id = $this->pdo->lastInsertId();
+            //var_dump($last_id);
 
             if ($vm_data['os'] == 'winsrv') {
                 $ip_data = array(
@@ -60,15 +64,32 @@ class vmsCreateModel
                 $ip_status = $this->pdo->prepare('INSERT INTO storagehost_hosting.ip(ip, linux_instance_id, windows_instance_id) VALUES (:ip, :linux_instance_id, :windows_instance_id)');
                 $ip_status->execute(array(
                     ':ip' => $ip,
-                    ':linux_instance_id' => 1,
-                    ':windows_instance_id' => 1
+                    ':linux_instance_id' => $ip_data['linux'],
+                    ':windows_instance_id' => $ip_data['windows']
                 ));
                 if ($ip_status) {
-                    return array(
-                        'status' => 'success',
-                        'data' => $this->fetchVmData(),
-                        'date' => time()
-                    );
+                    // VM insertion is complete in the database, add the data in a text file for PowerShell service
+                    try {
+                        $this->addVmData($hostname, $ip, $vm_data['instance_type'], $user_data['data']['id']);
+
+                        return array(
+                            'status' => 'success',
+                            'data' => array(
+                                'hostname' => $hostname,
+                                'ip' => $ip,
+                                'os' => $vm_data['os'],
+                                'instance_type' => $vm_data['instance_type'],
+                                'order_id' => $vm_data['order_id'],
+                            ),
+                            'date' => time()
+                        );
+                    } catch (Exception $exception) {
+                        return array(
+                            'status' => 'error',
+                            'message' => $exception->getMessage(),
+
+                        );
+                    }
                 } else {
                     return array(
                         'status' => 'error',
@@ -158,8 +179,89 @@ class vmsCreateModel
 
     }
 
-    private function fetchVmData()
+    private function fetchVmData(int $id)
     {
+        try {
+            $req = $this->pdo->prepare('SELECT * FROM storagehost_hosting.vm WHERE id = :id');
+            $req->bindParam(':id', $id);
+            $req->execute();
+            return ($req->fetchAll());
+        } catch (\PDOException $exception) {
+            return array(
+                'status' => 'error',
+                'message' => $exception->getMessage(),
+                'date' => time()
+            );
+        }
+    }
 
+    /**
+     * Method used to add VM data in the text file under /src/routes/Service/VmInteraction/create/vm_creation.txt
+     * @param string $hostname
+     * @param string $ip
+     * @param string $instance_type
+     * @param int $user_id
+     * @throws \Exception
+     */
+    private function addVmData(string $hostname, string $ip, string $instance_type, int $user_id)
+    {
+        // Set instance type
+        $vcpu = 0;
+        $ram = 0;
+        $storage = 0;
+
+        switch ($instance_type) {
+            case "s1s":
+                $vcpu = 1;
+                $ram = 1024;
+                $storage = 25000;
+                break;
+            case "s1m":
+                $vcpu = 2;
+                $ram = 2048;
+                $storage = 50000;
+                break;
+            case "s1l":
+                $vcpu = 2;
+                $ram = 4096;
+                $storage = 75000;
+                break;
+            case "s2s":
+                $vcpu = 4;
+                $ram = 8096;
+                $storage = 150000;
+                break;
+            case "s2m":
+                $vcpu = 4;
+                $ram = 16384;
+                $storage = 200000;
+                break;
+            case "s2l":
+                $vcpu = 6;
+                $ram = 32768;
+                $storage = 300000;
+                break;
+        }
+
+        // Open text file for writing
+        $handle = fopen(__DIR__.'/../../../Service/VmInteraction/create/vm_creation.txt', 'a+');
+        //$handle = fopen('vm_creation.txt', 'a+');
+        if (flock($handle, LOCK_EX)) {
+            fwrite($handle, $hostname . ",");
+            fwrite($handle, $ip . ",");
+            fwrite($handle, $vcpu . ",");
+            fwrite($handle, $ram . ",");
+            $req = fwrite($handle, $storage . PHP_EOL);
+            flock($handle, LOCK_UN);
+        } else {
+            throw new \Exception('Cannot lock text file!');
+        }
+
+        if ($req) {
+            fclose($handle);
+            return true;
+        } else {
+            throw new \Exception('Failed to write data in the text file!');
+        }
     }
 }

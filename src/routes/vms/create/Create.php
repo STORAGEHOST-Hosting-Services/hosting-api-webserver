@@ -22,7 +22,7 @@ class Create
         $this->error_vm_data = "";
     }
 
-    public function validateData(): array
+    public function validateData()
     {
         // Check if all data are present
         if ($this->vm_data && $this->vm_data['username'] && $this->vm_data['password'] && $this->vm_data['instance_type'] && $this->vm_data['os'] && $this->vm_data['order_id'] && $this->user_data) {
@@ -47,7 +47,7 @@ class Create
 
             // Check if the provided values match instance type
             $instance_type = $this->vm_data['instance_type'];
-            if ($instance_type == "s1s" || $instance_type == "s1m" || $instance_type == "s1l" || $instance_type == "s2s" || $instance_type == "s2m" || $instance_type == "s2l") {
+            if ($instance_type == "app" || $instance_type == "s1s" || $instance_type == "s1m" || $instance_type == "s1l" || $instance_type == "s2s" || $instance_type == "s2m" || $instance_type == "s2l") {
                 $this->valid_vm_data['instance_type'] = $instance_type;
             } else {
                 $this->error_vm_data = "bad_instance_type";
@@ -64,14 +64,16 @@ class Create
             // Add order ID
             $this->valid_vm_data['order_id'] = $this->vm_data['order_id'];
 
+            //var_dump($this->error_vm_data);
+
             if (empty($this->error_vm_data)) {
                 //return $this->error_vm_data;
-                var_dump($this->createVm());
+                return $this->createVm();
             } else {
                 //var_dump($this->valid_vm_data);
                 return array(
                     'status' => 'error',
-                    'message' => 'couille',
+                    'message' => $this->error_vm_data,
                     'date' => time()
                 );
             }
@@ -84,9 +86,9 @@ class Create
         }
     }
 
-    private function createVm()
+    private function createVm(): array
     {
-        return (new vmsCreateModel($this->pdo))->createVm($this->valid_vm_data);
+        return (new vmsCreateModel($this->pdo))->createVm($this->valid_vm_data, $this->user_data);
     }
 
     private function getOrderExistence()

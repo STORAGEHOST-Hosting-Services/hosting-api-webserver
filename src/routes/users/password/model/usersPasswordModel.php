@@ -13,11 +13,6 @@ use PDOException;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
-include __DIR__ . "/../../../../config/PHPMailer/src/Exception.php";
-include __DIR__ . "/../../../../config/PHPMailer/src/SMTP.php";
-include __DIR__ . "/../../../../config/PHPMailer/src/PHPMailer.php";
-include __DIR__ . "/../../../../config/Config.php";
-
 class usersPasswordModel
 {
     private PDO $pdo;

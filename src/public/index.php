@@ -464,58 +464,6 @@ $app->post('/api/users/login', function (Request $request, Response $response) {
     }
 });
 
-// Send email to user
-$app->post('/api/users/password', function (Request $request, Response $response) {
-    $body = $request->getParsedBody();
-
-    if (isset($body) && !empty($body)) {
-        //$result = (new Password($this->pdo, "", $body['email'], ""))->sendEmail();
-        $result = true;
-        if ($result) {
-            return $response->withStatus(204);
-        } else {
-            return $response->withStatus(400)->withJson(
-                array(
-                    'status' => 'error',
-                    'message' => "bad_request",
-                    'date' => time()
-                ));
-        }
-    } else {
-        return $response->withStatus(400)->withJson(array(
-            'status' => 'error',
-            'message' => 'missing_body',
-            'date' => time()
-        ));
-    }
-});
-
-// Update user password
-$app->patch('/api/users/password', function (Request $request, Response $response) {
-    $body = $request->getParsedBody();
-
-    if (isset($body) && !empty($body)) {
-        $result = (new Password($this->pdo, $body['token'], $body['email'], $body['password']))->updateUser();
-
-        if ($result == "ok") {
-            return $response->withStatus(204);
-        } else {
-            return $response->withStatus(400)->withJson(
-                array(
-                    'status' => 'error',
-                    'message' => "bad_request",
-                    'date' => time()
-                ));
-        }
-    } else {
-        return $response->withStatus(400)->withJson(array(
-            'status' => 'error',
-            'message' => 'missing_body',
-            'date' => time()
-        ));
-    }
-});
-
 /**
  * ---------------------------------------------------------------------------------------------------------------------
  */

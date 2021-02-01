@@ -175,7 +175,7 @@ class usersPasswordModel
         $mail = new PHPMailer(true);
 
         try {
-            include "../config/includes/mail_settings.php";
+            include __DIR__ . "/../../../../config/includes/mail_settings.php";
 
             // Define sender and recipients settings
             $mail->setFrom("notifications.storagehost@gmail.com", 'STORAGEHOST - Hosting Services');

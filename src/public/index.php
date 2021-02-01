@@ -469,8 +469,8 @@ $app->post('/api/users/password', function (Request $request, Response $response
     $body = $request->getParsedBody();
 
     if (isset($body) && !empty($body)) {
-        $result = (new Password($this->pdo, "", $body['email'], ""))->sendEmail();
-
+        //$result = (new Password($this->pdo, "", $body['email'], ""))->sendEmail();
+        $result = true;
         if ($result) {
             return $response->withStatus(204);
         } else {
@@ -495,8 +495,8 @@ $app->patch('/api/users/password', function (Request $request, Response $respons
     $body = $request->getParsedBody();
 
     if (isset($body) && !empty($body)) {
-        //$result = (new Password($this->pdo, $body['token'], $body['email'], $body['password']))->updateUser();
-        $result = true;
+        $result = (new Password($this->pdo, $body['token'], $body['email'], $body['password']))->updateUser();
+
         if ($result == "ok") {
             return $response->withStatus(204);
         } else {
@@ -514,8 +514,6 @@ $app->patch('/api/users/password', function (Request $request, Response $respons
             'date' => time()
         ));
     }
-
-
 });
 
 /**

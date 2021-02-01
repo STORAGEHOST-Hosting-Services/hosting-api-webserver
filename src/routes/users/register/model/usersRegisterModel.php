@@ -64,7 +64,7 @@ class usersRegisterModel
     {
         global $activation_key;
         try {
-            $req = $this->pdo->prepare('INSERT INTO storagehost_hosting.user(last_name, first_name, email, address, zip, city, country, phone, password, activation, activation_key) VALUES (:lastname, :firstname, :email, :address, :zip, :city, :country, :phone, :password, :activation, :activation_key)');
+            $req = $this->pdo->prepare('INSERT INTO storagehost_hosting.user(last_name, first_name, email, address, zip, city, country, phone, password, activation, activation_key, password_reset_token) VALUES (:lastname, :firstname, :email, :address, :zip, :city, :country, :phone, :password, :activation, :activation_key, :password_reset_token)');
             $req->execute(
                 array(
                     ':lastname' => $this->form_data['lastname'],
@@ -79,7 +79,8 @@ class usersRegisterModel
 
                     // Set a default account status at 0, who means account disabled
                     ':activation' => 0,
-                    ':activation_key' => $activation_key
+                    ':activation_key' => $activation_key,
+                    ':password_reset_token' => 0
                 )
             );
             if ($req) {

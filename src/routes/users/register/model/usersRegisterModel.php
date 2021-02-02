@@ -131,7 +131,7 @@ class usersRegisterModel
         <b>Votre compte requiert une activation.</b><br/><br/>
 	    Merci de bien vouloir cliquer sur ce lien ou de le copier/coller dans un navigateur afin de l'activer :
 	    <br/><br/>
-        http://localhost/api/user/activation/email=" . $encoded_email . "&token=" . $encoded_key . "
+        https://api.panel.storagehost.ch/api/users/activation/email=" . $encoded_email . "&token=" . $encoded_key . "
         <br/>
         <br/>       
         ---------------<br/>

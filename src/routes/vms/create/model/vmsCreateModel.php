@@ -17,7 +17,7 @@ class vmsCreateModel
 
     public function createVm(array $vm_data, array $user_data)
     {
-        var_dump($user_data);
+        //var_dump($user_data);
         // Declare variables
         $hostname = $this->getName($vm_data['os']);
         $ip = $this->getIp();

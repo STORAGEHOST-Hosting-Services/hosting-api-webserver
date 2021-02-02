@@ -170,7 +170,7 @@ class usersPasswordModel
         <b>Si vous n'êtes pas à l'origine de cette demande, merci de ne pas tenir compte de cet email.</b><br/><br/>
 	    Pour modifier votre mot de passe, merci de bien vouloir cliquer sur ce lien ou de le copier/coller dans un navigateur afin de l'activer :
 	    <br/><br/>
-        http://localhost/password_reset.php?email=" . $encoded_email . "&token=" . $encoded_key . "
+        http://localhost/password.php?email=" . $encoded_email . "&token=" . $encoded_key . "
         <br/>
         <br/>       
         ---------------<br/>

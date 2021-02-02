@@ -180,28 +180,13 @@ class vmsCreateModel
 
     }
 
-    private function fetchVmData(int $id)
-    {
-        try {
-            $req = $this->pdo->prepare('SELECT * FROM storagehost_hosting.vm WHERE id = :id');
-            $req->bindParam(':id', $id);
-            $req->execute();
-            return ($req->fetchAll());
-        } catch (\PDOException $exception) {
-            return array(
-                'status' => 'error',
-                'message' => $exception->getMessage(),
-                'date' => time()
-            );
-        }
-    }
-
     /**
      * Method used to add VM data in the text file under /src/routes/Service/VmInteraction/create/vm_creation.txt
      * @param string $hostname
      * @param string $ip
      * @param string $instance_type
      * @param int $user_id
+     * @return bool
      * @throws \Exception
      */
     private function addVmData(string $hostname, string $ip, string $instance_type, int $user_id)
@@ -245,7 +230,7 @@ class vmsCreateModel
         }
 
         // Open text file for writing
-        $handle = fopen(__DIR__.'/../../../Service/VmInteraction/create/vm_creation.txt', 'a+');
+        $handle = fopen(__DIR__ . '/../../../Service/VmInteraction/create/vm_creation.txt', 'a+');
         //$handle = fopen('vm_creation.txt', 'a+');
         if (flock($handle, LOCK_EX)) {
             fwrite($handle, $hostname . ",");

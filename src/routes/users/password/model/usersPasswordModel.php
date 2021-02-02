@@ -30,9 +30,9 @@ class usersPasswordModel
 
     /**
      * Method to check if mail given by the user already exists in the database. If so, it will return an error message.
-     * @return bool|null
+     * @return array
      */
-    public function checkEmailExistence(): ?bool
+    public function checkEmailExistence()
     {
         try {
             $req = $this->pdo->prepare('SELECT email FROM storagehost_hosting.user WHERE email = :email');
@@ -47,9 +47,12 @@ class usersPasswordModel
                 return false;
             }
         } catch (PDOException $e) {
-            echo $e->getMessage();
+            return array(
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'date' => time()
+            );
         }
-        return null;
     }
 
     /**
@@ -87,9 +90,12 @@ class usersPasswordModel
                 );
             }
         } catch (PDOException $e) {
-            echo json_encode($e->getMessage());
+            return array(
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'date' => time()
+            );
         }
-        return null;
     }
 
     public function verifyToken()
@@ -112,13 +118,18 @@ class usersPasswordModel
                 return false;
             }
         } catch (PDOException $e) {
-            echo json_encode($e->getMessage());
+            return array(
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'date' => time()
+            );
         }
-        return null;
     }
 
     public function updatePassword()
     {
+        var_dump($this);
+        echo "oof";
         try {
             $req = $this->pdo->prepare('UPDATE storagehost_hosting.user SET storagehost_hosting.user.password = :password WHERE storagehost_hosting.user.email = :email');
             $req->execute(
@@ -182,7 +193,11 @@ class usersPasswordModel
             $mail->Body = $message;
             $mail->send();
         } catch (Exception $e) {
-            echo "Message could not be sent. Mailer error: {$mail->ErrorInfo}";
+            return array(
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'date' => time()
+            );
         }
     }
 

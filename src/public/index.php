@@ -207,14 +207,14 @@ $app->post('/api/users/me/orders', function (Request $request, Response $respons
                 return $response->withStatus(400)->withJson(array(
                     'status' => 'error',
                     'message' => $result,
-                    'timestamp' => time()
+                    'date' => time()
                 ));
             }
         } else {
             return $response->withStatus(400)->withJson(array(
                 'status' => 'error',
                 'message' => 'missing_body',
-                'timestamp' => time()
+                'date' => time()
             ));
         }
     } else {
@@ -256,7 +256,7 @@ $app->post('/api/vms', function (Request $request, Response $response) {
                 array(
                     'status' => 'error',
                     'message' => "missing_body",
-                    'timestamp' => time()
+                    'date' => time()
                 ));
         }
     } else {
@@ -284,7 +284,7 @@ $app->get('/api/vms/{id}/info', function (Request $request, Response $response, 
                 array(
                     'status' => 'error',
                     'message' => "missing_parameter_id",
-                    'timestamp' => time()
+                    'date' => time()
                 ));
         }
     } else {
@@ -468,7 +468,7 @@ $app->post('/api/users/login', function (Request $request, Response $response) {
 $app->post('/api/users/password', function (Request $request, Response $response) {
     $body = $request->getParsedBody();
 
-    if (isset($body) && !empty($body)) {
+    if (isset($body) && isset($body['email']) && !empty($body)) {
         $result = (new Password($this->pdo, "", $body['email'], ""))->sendEmail();
 
         if ($result) {
@@ -491,13 +491,13 @@ $app->post('/api/users/password', function (Request $request, Response $response
 });
 
 // Update user password
-$app->patch('/api/users/password', function (Request $request, Response $response) {
+$app->post('/api/users/password/reset', function (Request $request, Response $response) {
     $body = $request->getParsedBody();
 
-    if (isset($body) && !empty($body)) {
+    if (isset($body) && isset($body['email']) && isset($body['token']) && isset($body['password']) && !empty($body)) {
         $result = (new Password($this->pdo, $body['token'], $body['email'], $body['password']))->updateUser();
 
-        if ($result == "ok") {
+        if ($result) {
             return $response->withStatus(204);
         } else {
             return $response->withStatus(400)->withJson(

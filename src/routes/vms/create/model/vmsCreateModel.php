@@ -26,7 +26,7 @@ class vmsCreateModel
         $req->execute(array(
             ':hostname' => $hostname,
             ':ip' => $ip,
-            ':power_status' => false,
+            ':power_status' => 0,
             ':os' => $vm_data['os'],
             ':instance_type' => $vm_data['instance_type'],
             ':order_id' => $vm_data['order_id'],

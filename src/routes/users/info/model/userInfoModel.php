@@ -44,7 +44,7 @@ class userInfoModel
     public function listVms(int $id, PDO $pdo): array
     {
         // Search for containers using the user ID
-        $req = $pdo->prepare('SELECT hostname, ip, power_status, os, instance_type, order_id FROM storagehost_hosting.vm INNER JOIN user ON user.id = order_id WHERE order_id = :id');
+        $req = $pdo->prepare('SELECT hostname, ip, power_status, os, instance_type, order_id FROM storagehost_hosting.vm WHERE user_id = :id');
         $req->bindParam(':id', $id);
         $req->execute();
 

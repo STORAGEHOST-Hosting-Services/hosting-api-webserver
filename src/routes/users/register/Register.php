@@ -239,7 +239,7 @@ class Register
         }
 
         // Validate country
-        if ($caseFormData['country'] == "Suisse" || $caseFormData[6] == "France") {
+        if ($caseFormData['country'] == "Suisse" || $caseFormData['country'] == "France") {
             $this->valid_form_data['country'] = $caseFormData['country'];
         } else {
             return "bad_country";

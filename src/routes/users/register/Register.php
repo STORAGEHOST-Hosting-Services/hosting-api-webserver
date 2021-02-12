@@ -223,7 +223,7 @@ class Register
         }
 
         // Validate zip code
-        if (filter_var($caseFormData['zip'], FILTER_VALIDATE_INT, array("options" => array("min_range" => 1000, "max_range" => 99999)))) {
+        if (filter_var((int)$caseFormData['zip'], FILTER_VALIDATE_INT, array("options" => array("min_range" => 1000, "max_range" => 99999)))) {
             $this->valid_form_data['zip'] = $caseFormData['zip'];
         } else {
             return "bad_zip";

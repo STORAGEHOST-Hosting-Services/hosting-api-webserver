@@ -48,7 +48,6 @@ class JWTHandler
 
         $this->jwt = JWT::encode($this->token, $this->jwt_secrect);
         return $this->jwt;
-
     }
 
     public function _jwt_decode_data($jwt_token): array

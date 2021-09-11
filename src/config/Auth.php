@@ -23,10 +23,10 @@ class Auth extends JWTHandler
         if (array_key_exists('Authorization', $this->headers) && !empty(trim($this->headers['Authorization']))) {
             $this->token = explode(" ", trim($this->headers['Authorization']));
             if (isset($this->token[1]) && !empty(trim($this->token[1]))) {
-                $data = $this->_jwt_decode_data($this->token[1]);
+                $token = $this->_jwt_decode_data($this->token[1]);
 
-                if (isset($data['auth']) && isset($data['data']->user_id) && $data['auth']) {
-                    return $this->fetchUser($data['data']->user_id);
+                if (isset($token['auth']) && isset($token['data']->user_id) && $token['auth']) {
+                    return $this->fetchUser($token['data']->user_id);
                 } else {
                     return null;
                 }
